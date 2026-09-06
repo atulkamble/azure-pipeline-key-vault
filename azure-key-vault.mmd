@@ -1,0 +1,16 @@
+flowchart LR
+    U[Admin / Trainer] --> KV[Azure Key Vault]
+    KV --> S[Secret: db-password]
+
+    VG[Azure DevOps Variable Group] --> P[Azure YAML Pipeline]
+    KV -->|AzureKeyVault@2| P
+    P -->|safe status file| A[Pipeline Artifact]
+
+    ARM[ARM Template] -->|Key Vault reference| KV
+    ARM --> R[Azure Resource Deployment]
+
+    ADF[Azure Data Factory] -->|Managed Identity| KV
+    KV -->|Secret value at runtime| ADF
+
+    classDef secure fill:#f5f5f5,stroke:#333,stroke-width:1px;
+    class KV,S secure;

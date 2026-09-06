@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminPassword": {
+      "type": "securestring"
+    }
+  },
+  "resources": [],
+  "outputs": {
+    "demo": {
+      "type": "string",
+      "value": "Secret supplied securely to ARM deployment."
+    }
+  }
+}

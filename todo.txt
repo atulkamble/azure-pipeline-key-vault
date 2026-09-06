@@ -1,0 +1,17 @@
+Azure Key Vault - Live Training To-Do
+
+1. Create Resource Group and Azure Key Vault.
+2. Review the current Key Vault UI: Objects > Secrets and Access control (IAM).
+3. Create a secret named db-password.
+4. Create an Azure DevOps Variable Group and define a secret variable.
+5. Optional: Link the Variable Group to Azure Key Vault.
+6. Create an Azure Resource Manager service connection in Azure DevOps.
+7. Grant the service connection identity permission to read Key Vault secrets.
+8. Use AzureKeyVault@2 in a YAML pipeline to fetch db-password.
+9. Verify secret masking; never print the actual secret value.
+10. Create a safe text file proving the secret was retrieved, without storing the secret itself.
+11. Publish the safe file as a Pipeline Artifact.
+12. Deploy an ARM template that references a Key Vault secret securely.
+13. Create Azure Data Factory and configure a linked service using Azure Key Vault.
+14. Grant Data Factory managed identity access to the Key Vault secret.
+15. Test the linked service and review security best practices.

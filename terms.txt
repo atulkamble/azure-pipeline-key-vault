@@ -1,0 +1,20 @@
+Azure Key Vault - Important Terms
+
+Azure Key Vault - Azure service used to securely store and access secrets, keys, and certificates.
+Secret - Sensitive value such as a password, token, or connection string.
+Key - Cryptographic key used for encryption, decryption, signing, or verification.
+Certificate - TLS/SSL certificate managed securely in Key Vault.
+RBAC - Azure role-based access control used to decide who can access Key Vault resources/data.
+Access Policy - Legacy Key Vault permission model still seen in some vault configurations.
+Managed Identity - Azure-managed identity that lets a resource authenticate without storing credentials.
+Service Principal - Application identity commonly used by Azure DevOps service connections.
+Variable Group - Azure DevOps collection of variables that can be shared by pipelines.
+Secret Variable - Pipeline variable whose value is protected and masked in logs.
+AzureKeyVault@2 - Azure DevOps task that downloads selected Key Vault secrets for pipeline use.
+Pipeline Artifact - Files published by a pipeline for later stages/jobs or download; do not publish raw secrets.
+ARM Template - JSON infrastructure-as-code template for deploying Azure resources.
+Key Vault Reference - Secure reference that allows a deployment/resource to retrieve a secret without hardcoding it.
+Azure Data Factory - Azure data integration/orchestration service.
+Linked Service - Data Factory connection definition for an external service or data store.
+Secret Masking - Pipeline behavior that hides known secret values in logs.
+Least Privilege - Give an identity only the minimum permissions required.

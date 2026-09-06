@@ -1,0 +1,204 @@
+{
+  "tldrawFileFormatVersion": 1,
+  "schema": {
+    "schemaVersion": 2,
+    "sequences": {}
+  },
+  "records": [
+    {
+      "id": "document:document",
+      "typeName": "document",
+      "name": ""
+    },
+    {
+      "id": "page:page",
+      "typeName": "page",
+      "name": "Azure Key Vault Terms",
+      "index": "a1"
+    },
+    {
+      "id": "shape:0",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 80,
+      "y": 80,
+      "rotation": 0,
+      "index": "a0",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "Key Vault\nSecure store for secrets, keys, certificates.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    },
+    {
+      "id": "shape:1",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 560,
+      "y": 80,
+      "rotation": 0,
+      "index": "a1",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "Secret\nPassword, token, or connection string.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    },
+    {
+      "id": "shape:2",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 80,
+      "y": 230,
+      "rotation": 0,
+      "index": "a2",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "RBAC\nControls who can read/manage vault data.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    },
+    {
+      "id": "shape:3",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 560,
+      "y": 230,
+      "rotation": 0,
+      "index": "a3",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "Managed Identity\nAzure identity without stored credentials.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    },
+    {
+      "id": "shape:4",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 80,
+      "y": 380,
+      "rotation": 0,
+      "index": "a4",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "Variable Group\nShared Azure DevOps pipeline variables.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    },
+    {
+      "id": "shape:5",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 560,
+      "y": 380,
+      "rotation": 0,
+      "index": "a5",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "AzureKeyVault@2\nPipeline task to fetch vault secrets.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    },
+    {
+      "id": "shape:6",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 80,
+      "y": 530,
+      "rotation": 0,
+      "index": "a6",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "ARM Reference\nUses a vault secret without hardcoding it.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    },
+    {
+      "id": "shape:7",
+      "typeName": "shape",
+      "type": "text",
+      "parentId": "page:page",
+      "x": 560,
+      "y": 530,
+      "rotation": 0,
+      "index": "a7",
+      "opacity": 1,
+      "isLocked": false,
+      "props": {
+        "color": "black",
+        "size": "m",
+        "w": 400,
+        "text": "ADF Linked Service\nADF connection that can use Key Vault.",
+        "font": "draw",
+        "align": "start",
+        "autoSize": false,
+        "scale": 1
+      },
+      "meta": {}
+    }
+  ]
+}
