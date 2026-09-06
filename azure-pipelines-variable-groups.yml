@@ -8,7 +8,7 @@ steps:
 
 - task: AzureKeyVault@2
   inputs:
-    azureSubscription: 'azure-keyvault-connection'
+    azureSubscription: 'azure-connection'
     KeyVaultName: 'myvault98600'
     SecretsFilter: 'dbpassword'
     RunAsPreJob: true
