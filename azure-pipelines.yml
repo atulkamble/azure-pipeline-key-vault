@@ -6,8 +6,13 @@ pool:
 
 variables:
   resourceGroup: 'myRG'
+  location: 'centralindia'
   keyVaultName: 'myvault98600'
   secretName: 'dbpassword'
+
+  vnetName: 'myvnet'
+  subnetName: 'default'
+  privateEndpointName: 'kv-private-endpoint'
 
 steps:
 
@@ -24,7 +29,7 @@ steps:
 # 2. Verify secret was downloaded
 - script: |
     echo "Secret downloaded successfully from Azure Key Vault"
-    echo "Secret variable name: $(secretName)"
+    echo "Secret name: $(secretName)"
   displayName: 'Verify Key Vault Secret'
 
 
@@ -37,26 +42,58 @@ steps:
     scriptLocation: inlineScript
     inlineScript: |
 
+      echo "Getting Key Vault Resource ID..."
+
       KV_ID=$(az keyvault show \
         --name $(keyVaultName) \
         --resource-group $(resourceGroup) \
         --query id \
         --output tsv)
 
-      az network private-endpoint create \
-        --name kv-private-endpoint \
+      echo "Checking Private Endpoint..."
+
+      if az network private-endpoint show \
+        --name $(privateEndpointName) \
         --resource-group $(resourceGroup) \
-        --vnet-name myVNet \
-        --subnet private-endpoint-subnet \
-        --private-connection-resource-id $KV_ID \
-        --group-id vault \
-        --connection-name private
+        >/dev/null 2>&1
+      then
+        echo "Private Endpoint already exists."
+
+      else
+        echo "Creating Private Endpoint..."
+
+        az network private-endpoint create \
+          --name $(privateEndpointName) \
+          --resource-group $(resourceGroup) \
+          --location $(location) \
+          --vnet-name $(vnetName) \
+          --subnet $(subnetName) \
+          --private-connection-resource-id "$KV_ID" \
+          --group-id vault \
+          --connection-name private
+      fi
 
 
-# 4. Use the secret
+# 4. Verify Private Endpoint
+- task: AzureCLI@2
+  displayName: 'Verify Private Endpoint'
+  inputs:
+    azureSubscription: 'keyvault-connection'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      az network private-endpoint show \
+        --name $(privateEndpointName) \
+        --resource-group $(resourceGroup) \
+        --query "{Name:name,State:provisioningState,Location:location}" \
+        --output table
+
+
+# 5. Use Key Vault Secret
 - script: |
-    echo "Using secret securely..."
-    echo "Key Vault secret is available to this task."
+    echo "Using Key Vault secret securely..."
+    echo "Secret is available as DB_PASSWORD."
   displayName: 'Use Key Vault Secret'
   env:
     DB_PASSWORD: $(dbpassword)
