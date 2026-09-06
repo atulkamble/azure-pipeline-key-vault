@@ -1,0 +1,99 @@
+trigger:
+- main
+
+pool:
+vmImage: ubuntu-latest
+
+variables:
+resourceGroup: 'myRG'
+location: 'centralindia'
+keyVaultName: 'myvault98600'
+secretName: 'dbpassword'
+
+vnetName: 'myvnet'
+subnetName: 'default'
+privateEndpointName: 'kv-private-endpoint'
+
+steps:
+
+# 1. Download secret from Azure Key Vault
+- task: AzureKeyVault@2
+displayName: 'Download Key Vault Secret'
+inputs:
+azureSubscription: 'keyvault-connection'
+KeyVaultName: '$(keyVaultName)'
+SecretsFilter: '$(secretName)'
+RunAsPreJob: true
+
+
+# 2. Verify secret was downloaded
+- script: |
+echo "Secret downloaded successfully from Azure Key Vault"
+echo "Secret name: $(secretName)"
+displayName: 'Verify Key Vault Secret'
+
+
+# 3. Create Private Endpoint for Key Vault
+- task: AzureCLI@2
+displayName: 'Create Key Vault Private Endpoint'
+inputs:
+azureSubscription: 'keyvault-connection'
+scriptType: bash
+scriptLocation: inlineScript
+inlineScript: |
+
+echo "Getting Key Vault Resource ID..."
+
+KV_ID=$(az keyvault show \
+--name $(keyVaultName) \
+--resource-group $(resourceGroup) \
+--query id \
+--output tsv)
+
+echo "Checking Private Endpoint..."
+
+if az network private-endpoint show \
+--name $(privateEndpointName) \
+--resource-group $(resourceGroup) \
+>/dev/null 2>&1
+then
+echo "Private Endpoint already exists."
+
+else
+echo "Creating Private Endpoint..."
+
+az network private-endpoint create \
+--name $(privateEndpointName) \
+--resource-group $(resourceGroup) \
+--location $(location) \
+--vnet-name $(vnetName) \
+--subnet $(subnetName) \
+--private-connection-resource-id "$KV_ID" \
+--group-id vault \
+--connection-name private
+fi
+
+
+# 4. Verify Private Endpoint
+- task: AzureCLI@2
+displayName: 'Verify Private Endpoint'
+inputs:
+azureSubscription: 'keyvault-connection'
+scriptType: bash
+scriptLocation: inlineScript
+inlineScript: |
+
+az network private-endpoint show \
+--name $(privateEndpointName) \
+--resource-group $(resourceGroup) \
+--query "{Name:name,State:provisioningState,Location:location}" \
+--output table
+
+
+# 5. Use Key Vault Secret
+- script: |
+echo "Using Key Vault secret securely..."
+echo "Secret is available as DB_PASSWORD."
+displayName: 'Use Key Vault Secret'
+env:
+DB_PASSWORD: $(dbpassword)
