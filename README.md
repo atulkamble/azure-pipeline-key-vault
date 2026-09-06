@@ -114,12 +114,18 @@ Add Role Assignment
 
 Common roles:
 
-```text
-Key Vault Administrator
-Key Vault Secrets Officer
-Key Vault Secrets User
-```
+| Key Vault Role                | What it can do                                                              | Best use                     |
+| ----------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
+| **Key Vault Administrator**   | Manage **keys, secrets, and certificates** — almost full data-plane control | Admin / DevOps engineer      |
+| **Key Vault Secrets Officer** | **Create, update, read, and delete secrets**                                | Person/app managing secrets  |
+| **Key Vault Secrets User**    | **Read secret values only**                                                 | Application / Azure Pipeline |
 
+**Easy way to remember:**
+**Administrator** → Everything 🔑
+**Secrets Officer** → Manage secrets ✏️
+**Secrets User** → Read/use secrets 👀
+
+For an **Azure Pipeline that only needs to fetch a secret**, normally use **Key Vault Secrets User** (least privilege).
 For pipelines that only need to read secrets, use:
 
 ```text
