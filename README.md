@@ -1,4 +1,4 @@
-## Azure Key Vault – Short Notes
+## Azure Key Vault
 
 ### What is Azure Key Vault?
 
