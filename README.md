@@ -1,3 +1,423 @@
+Below is a very basic teaching/lab flow for the same points.
+
+### 1. Azure Key Vault
+
+Create a Key Vault and one secret.
+
+```bash
+az login
+
+az group create \
+  --name myRG \
+  --location centralindia
+
+az keyvault create \
+  --name myvault12345 \
+  --resource-group myRG \
+  --location centralindia
+
+az keyvault secret set \
+  --vault-name myvault12345 \
+  --name dbpassword \
+  --value "Pass@123"
+```
+
+Verify:
+
+```bash
+az keyvault secret show \
+  --vault-name myvault12345 \
+  --name dbpassword \
+  --query value \
+  -o tsv
+```
+
+---
+
+### 2. Important Update Related to Key Vault UI Change
+
+In Azure Portal:
+
+```text
+Azure Portal
+   ↓
+Key Vault
+   ↓
+Objects
+   ↓
+Secrets
+   ↓
+Generate / Import
+```
+
+For access control, prefer:
+
+```text
+Key Vault
+   ↓
+Access Control (IAM)
+   ↓
+Add Role Assignment
+```
+
+Common roles:
+
+```text
+Key Vault Administrator
+Key Vault Secrets Officer
+Key Vault Secrets User
+```
+
+For pipelines that only need to read secrets, use:
+
+```text
+Key Vault Secrets User
+```
+
+---
+
+### 3. Define Secret as Variable in Variable Group
+
+Go to:
+
+```text
+Azure DevOps
+↓
+Pipelines
+↓
+Library
+↓
++ Variable Group
+```
+
+Create:
+
+```text
+Variable Group: dev-secrets
+```
+
+Add variable:
+
+```text
+Name: dbPassword
+Value: Pass@123
+```
+
+Click the lock icon to make it secret.
+
+Basic YAML:
+
+```yaml
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: dev-secrets
+
+steps:
+- script: |
+    echo "Variable loaded"
+    echo "Secret value will be masked:"
+    echo "$(dbPassword)"
+  displayName: Read Variable Group Secret
+```
+
+Expected output:
+
+```text
+Variable loaded
+Secret value will be masked:
+***
+```
+
+---
+
+### 4. Access Secret from Azure Key Vault Using Azure Pipeline
+
+First create an Azure DevOps Service Connection:
+
+```text
+Project Settings
+↓
+Service Connections
+↓
+New Service Connection
+↓
+Azure Resource Manager
+```
+
+Example connection name:
+
+```text
+azure-keyvault-connection
+```
+
+Give that service connection access to the Key Vault:
+
+```text
+Key Vault
+↓
+Access Control (IAM)
+↓
+Add Role Assignment
+↓
+Key Vault Secrets User
+```
+
+Then use:
+
+```yaml
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'azure-keyvault-connection'
+    KeyVaultName: 'myvault12345'
+    SecretsFilter: 'dbpassword'
+    RunAsPreJob: true
+
+- script: |
+    echo "Secret downloaded from Key Vault"
+    echo "$(dbpassword)"
+  displayName: Read Key Vault Secret
+```
+
+Azure Pipelines masks the secret:
+
+```text
+***
+```
+
+---
+
+### 5. Publish Secret as an Artifact Using YAML Pipeline
+
+For teaching purposes, do **not** publish the real secret in plaintext. Instead, create a sample file showing that the pipeline retrieved it.
+
+```yaml
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'azure-keyvault-connection'
+    KeyVaultName: 'myvault12345'
+    SecretsFilter: 'dbpassword'
+
+- script: |
+    mkdir output
+    echo "Secret successfully retrieved from Azure Key Vault" > output/result.txt
+  displayName: Create Output File
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: 'output'
+    artifact: 'keyvault-output'
+  displayName: Publish Artifact
+```
+
+Flow:
+
+```text
+Key Vault
+   ↓
+AzureKeyVault@2
+   ↓
+Pipeline
+   ↓
+Create result.txt
+   ↓
+Publish Pipeline Artifact
+```
+
+Avoid this:
+
+```bash
+echo "$(dbpassword)" > secret.txt
+```
+
+because it exposes the actual secret in an artifact.
+
+---
+
+### 6. Access Key Vault Secret Using ARM Template
+
+A simple ARM template can reference an existing Key Vault secret through a parameter.
+
+`azuredeploy.json`
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+
+  "parameters": {
+    "adminPassword": {
+      "type": "securestring"
+    }
+  },
+
+  "resources": [],
+
+  "outputs": {
+    "message": {
+      "type": "string",
+      "value": "Secret received securely"
+    }
+  }
+}
+```
+
+Create `azuredeploy.parameters.json`:
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+
+  "parameters": {
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/SUBSCRIPTION-ID/resourceGroups/myRG/providers/Microsoft.KeyVault/vaults/myvault12345"
+        },
+        "secretName": "dbpassword"
+      }
+    }
+  }
+}
+```
+
+Deploy:
+
+```bash
+az deployment group create \
+  --resource-group myRG \
+  --template-file azuredeploy.json \
+  --parameters azuredeploy.parameters.json
+```
+
+Flow:
+
+```text
+ARM Template
+     ↓
+Parameter File
+     ↓
+Azure Key Vault
+     ↓
+dbpassword
+     ↓
+Deployment
+```
+
+---
+
+### 7. Azure Key Vault with Data Factory
+
+Create:
+
+```text
+Azure Data Factory
+Azure Key Vault
+Secret: dbpassword
+```
+
+In Azure Data Factory:
+
+```text
+Manage
+↓
+Linked Services
+↓
+New
+↓
+Azure Key Vault
+```
+
+Select:
+
+```text
+Authentication:
+Managed Identity
+```
+
+Give the Data Factory managed identity permission:
+
+```text
+Key Vault
+↓
+Access Control (IAM)
+↓
+Add Role Assignment
+↓
+Key Vault Secrets User
+↓
+Select Data Factory Managed Identity
+```
+
+Then create another Linked Service, for example SQL Database.
+
+Instead of entering the password directly:
+
+```text
+Password
+↓
+Azure Key Vault
+↓
+Linked Service: AzureKeyVault1
+↓
+Secret Name: dbpassword
+```
+
+Overall flow:
+
+```text
+Azure Data Factory
+        ↓
+Managed Identity
+        ↓
+Azure Key Vault
+        ↓
+dbpassword
+        ↓
+SQL / Database / External Service
+```
+
+### Simple Teaching Order
+
+```text
+1. Azure Key Vault
+        ↓
+2. Key Vault UI + IAM
+        ↓
+3. Variable Group Secret
+        ↓
+4. Key Vault + Azure Pipeline
+        ↓
+5. Pipeline Artifact
+        ↓
+6. Key Vault + ARM Template
+        ↓
+7. Key Vault + Data Factory
+```
+
+For the live lab, the most important demo is **Key Vault → IAM → Secret → Service Connection → AzureKeyVault@2 → Pipeline**. This gives students the core concept before moving to ARM and Data Factory.
+
 # Azure Key Vault + Azure DevOps Pipeline
 
 ## 1. Cryptography Basics
