@@ -1,0 +1,19 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'azure-keyvault-connection'
+    KeyVaultName: 'myvault98600'
+    SecretsFilter: 'dbpassword'
+    RunAsPreJob: true
+
+- script: |
+    echo "Secret downloaded from Key Vault"
+    echo "$(dbpassword)"
+  displayName: Read Key Vault Secret
