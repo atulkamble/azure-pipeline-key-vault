@@ -1,0 +1,32 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: keyvault-demo-vars
+
+steps:
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'keyvault-service-connection'
+    KeyVaultName: '$(keyVaultName)'
+    SecretsFilter: 'db-password'
+    RunAsPreJob: false
+
+# Never echo $(db-password). Prove retrieval without exposing the value.
+- bash: |
+    if [ -n "$(db-password)" ]; then
+      echo "Key Vault secret was retrieved successfully." > secret-status.txt
+    else
+      echo "Secret retrieval failed." > secret-status.txt
+      exit 1
+    fi
+  displayName: Verify secret safely
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: 'secret-status.txt'
+    artifact: 'keyvault-demo-output'
+  displayName: Publish safe artifact
