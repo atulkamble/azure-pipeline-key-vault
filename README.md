@@ -286,8 +286,8 @@ steps:
 
 - task: AzureKeyVault@2
   inputs:
-    azureSubscription: 'azure-keyvault-connection'
-    KeyVaultName: 'myvault12345'
+    azureSubscription: 'keyvault-connection'
+    KeyVaultName: 'myvault98600'
     SecretsFilter: 'dbpassword'
 
 - script: |
@@ -298,7 +298,7 @@ steps:
 - task: PublishPipelineArtifact@1
   inputs:
     targetPath: 'output'
-    artifact: 'keyvault-output'
+    artifact: 'newfeed'
   displayName: Publish Artifact
 ```
 
