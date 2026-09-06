@@ -195,6 +195,20 @@ Secret value will be masked:
 
 ### 4. Access Secret from Azure Key Vault Using Azure Pipeline
 
+```
+az role assignment create \
+  --assignee-object-id 30ff370d-612a-46f1-b00c-9754c9bcc383 \
+  --assignee-principal-type ServicePrincipal \
+  --role "Key Vault Secrets User" \
+  --scope "/subscriptions/08b7b8d4-af42-4972-9517-11ea256ea068/resourceGroups/myRG/providers/Microsoft.KeyVault/vaults/myvault98600"
+```
+```
+az role assignment list \
+  --assignee 30ff370d-612a-46f1-b00c-9754c9bcc383 \
+  --scope "/subscriptions/08b7b8d4-af42-4972-9517-11ea256ea068/resourceGroups/myRG/providers/Microsoft.KeyVault/vaults/myvault98600" \
+  -o table
+```
+
 First create an Azure DevOps Service Connection:
 
 ```text
