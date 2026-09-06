@@ -1,3 +1,61 @@
+## Azure Key Vault – Short Notes
+
+### What is Azure Key Vault?
+
+Microsoft Azure Key Vault is a secure Azure service used to **store and manage sensitive information** instead of keeping it directly in application code, configuration files, or pipelines.
+
+### Why Use Key Vault?
+
+* **Security** – Keeps sensitive data in a centralized secure location.
+* **Avoid hardcoding** – Passwords and secrets don't need to be written directly in code.
+* **Access Control** – Control access using Microsoft Entra ID and Azure RBAC.
+* **Centralized Management** – Manage application secrets from one place.
+* **Secret Rotation** – Makes updating/rotating credentials easier.
+* **Integration** – Works with Azure Pipelines, VMs, App Service, Data Factory, ARM/Bicep, etc.
+* **Auditing** – Access can be monitored and logged.
+
+### What Can Key Vault Store?
+
+| Type             | Example                              | Purpose                         |
+| ---------------- | ------------------------------------ | ------------------------------- |
+| **Secrets**      | Password, API Key, Connection String | Store sensitive text/value      |
+| **Keys**         | RSA / EC keys                        | Encryption and signing          |
+| **Certificates** | SSL/TLS certificate                  | Secure HTTPS and authentication |
+
+### Types / Service Tiers of Azure Key Vault
+
+Azure Key Vault primarily has **two pricing tiers**:
+
+**Standard** – Software-protected keys; suitable for most applications.
+
+**Premium** – Supports **HSM-protected keys** in addition to software-protected keys; used when stronger key-protection/compliance requirements apply.
+
+For dedicated HSM requirements, Azure also provides **Managed HSM**, which is a separate Azure service designed specifically for HSM-backed cryptographic keys.
+
+### Simple Example
+
+```text
+Without Key Vault ❌
+
+Application
+   ↓
+Password = "Pass@123"
+Hardcoded in Code
+
+
+With Key Vault ✅
+
+Application / Pipeline
+        ↓
+Managed Identity / Service Principal
+        ↓
+Azure Key Vault
+        ↓
+Secret / Key / Certificate
+```
+
+### Azure Key Vault = **centralized secure storage and controlled access for secrets, cryptographic keys, and certificates.**
+
 ### 1. Azure Key Vault
 
 Create a Key Vault and one secret.
