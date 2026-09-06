@@ -13,6 +13,14 @@ steps:
     SecretsFilter: 'dbpassword'
     RunAsPreJob: true
 
+- task: PrivateEndpointConnection@1
+  inputs:
+    azureSubscription: 'keyvault-connection'
+    KeyVaultName: 'myvault98600'
+    SecretName: 'dbpassword'
+    ConnectionName: 'private'
+
+
 - script: |
     echo "Secret downloaded from Key Vault"
     echo "$(dbpassword)"
