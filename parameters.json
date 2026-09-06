@@ -5,9 +5,9 @@
     "adminPassword": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/<SUBSCRIPTION-ID>/resourceGroups/<RG>/providers/Microsoft.KeyVault/vaults/<KEY-VAULT-NAME>"
+          "id": "/subscriptions/08b7b8d4-af42-4972-9517-11ea256ea068/resourceGroups/myRG/providers/Microsoft.KeyVault/vaults/myvault98600"
         },
-        "secretName": "db-password"
+        "secretName": "dbpassword"
       }
     }
   }
