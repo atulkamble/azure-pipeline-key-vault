@@ -4,16 +4,12 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+- group: dev-secrets
+
 steps:
-
-- task: AzureKeyVault@2
-  inputs:
-    azureSubscription: 'keyvault-connection'
-    KeyVaultName: 'myvault98600'
-    SecretsFilter: 'dbpassword'
-    RunAsPreJob: true
-
 - script: |
-    echo "Secret downloaded from Key Vault"
-    echo "$(dbpassword)"
-  displayName: Read Key Vault Secret
+    echo "Variable loaded"
+    echo "Secret value will be masked:"
+    echo "$(dbPassword)"
+  displayName: Read Variable Group Secret
