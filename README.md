@@ -1,5 +1,3 @@
-Below is a very basic teaching/lab flow for the same points.
-
 ### 1. Azure Key Vault
 
 Create a Key Vault and one secret.
