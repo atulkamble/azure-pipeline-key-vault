@@ -4,29 +4,59 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  resourceGroup: 'myRG'
+  keyVaultName: 'myvault98600'
+  secretName: 'dbpassword'
+
 steps:
 
+# 1. Download secret from Azure Key Vault
 - task: AzureKeyVault@2
+  displayName: 'Download Key Vault Secret'
   inputs:
     azureSubscription: 'keyvault-connection'
-    KeyVaultName: 'myvault98600'
-    SecretsFilter: 'dbpassword'
+    KeyVaultName: '$(keyVaultName)'
+    SecretsFilter: '$(secretName)'
     RunAsPreJob: true
 
+
+# 2. Verify secret was downloaded
 - script: |
-    echo "Secret downloaded from Key Vault"
-    echo "$(dbpassword)"
-  displayName: Read Key Vault Secret
-      
-- task: PrivateEndpointConnection@1
+    echo "Secret downloaded successfully from Azure Key Vault"
+    echo "Secret variable name: $(secretName)"
+  displayName: 'Verify Key Vault Secret'
+
+
+# 3. Create Private Endpoint for Key Vault
+- task: AzureCLI@2
+  displayName: 'Create Key Vault Private Endpoint'
   inputs:
     azureSubscription: 'keyvault-connection'
-    KeyVaultName: 'myvault98600'
-    SecretName: 'dbpassword'
-    ConnectionName: 'private'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      KV_ID=$(az keyvault show \
+        --name $(keyVaultName) \
+        --resource-group $(resourceGroup) \
+        --query id \
+        --output tsv)
+
+      az network private-endpoint create \
+        --name kv-private-endpoint \
+        --resource-group $(resourceGroup) \
+        --vnet-name myVNet \
+        --subnet private-endpoint-subnet \
+        --private-connection-resource-id $KV_ID \
+        --group-id vault \
+        --connection-name private
 
 
+# 4. Use the secret
 - script: |
-    echo "Secret downloaded from Key Vault"
-    echo "$(dbpassword)"
-  displayName: Read Key Vault Secret
+    echo "Using secret securely..."
+    echo "Key Vault secret is available to this task."
+  displayName: 'Use Key Vault Secret'
+  env:
+    DB_PASSWORD: $(dbpassword)
