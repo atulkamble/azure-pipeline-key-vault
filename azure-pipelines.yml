@@ -11,14 +11,9 @@ steps:
     azureSubscription: 'keyvault-connection'
     KeyVaultName: 'myvault98600'
     SecretsFilter: 'dbpassword'
+    RunAsPreJob: true
 
 - script: |
-    mkdir output
-    echo "Secret successfully retrieved from Azure Key Vault" > output/result.txt
-  displayName: Create Output File
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: 'output'
-    artifact: 'newfeed'
-  displayName: Publish Artifact
+    echo "Secret downloaded from Key Vault"
+    echo "$(dbpassword)"
+  displayName: Read Key Vault Secret
