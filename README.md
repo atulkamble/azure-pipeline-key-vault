@@ -63,29 +63,25 @@ Create a Key Vault and one secret.
 ```bash
 az login
 
-az group create \
-  --name myRG \
-  --location centralindia
+az group create --name myRG --location centralindia
 
-az keyvault create \
-  --name myvault12345 \
-  --resource-group myRG \
-  --location centralindia
+az keyvault create --name myvault98600 --resource-group myRG --location centralindia
 
-az keyvault secret set \
-  --vault-name myvault12345 \
-  --name dbpassword \
-  --value "Pass@123"
+// Update RBAC permission
+
+IAM >> Add >> Add Role Assignment >> Key Vault Secrets Officer >> Select User >> Review and Apply 
+
+VAULT_ID=$(az keyvault show --name myvault98600 --resource-group myRG --query id -o tsv)
+
+echo $VAULT_ID
+
+az keyvault secret set --vault-name myvault98600 --name dbpassword --value "Pass@123"
 ```
 
 Verify:
 
 ```bash
-az keyvault secret show \
-  --vault-name myvault12345 \
-  --name dbpassword \
-  --query value \
-  -o tsv
+az keyvault secret show --vault-name myvault98600 --name dbpassword --query value -o tsv
 ```
 
 ---
